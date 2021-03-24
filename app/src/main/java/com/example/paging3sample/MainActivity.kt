@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.paging3sample.adapters.FooterAdapter
 import com.example.paging3sample.adapters.ReopAdapter
 import com.example.paging3sample.viewModels.MainViewModel
 import kotlinx.coroutines.flow.collect
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
 
         recyclerView.apply {
-            adapter = recyclerAdapter
+            adapter = recyclerAdapter.withLoadStateFooter(FooterAdapter { recyclerAdapter.retry() })
             layoutManager = LinearLayoutManager(this@MainActivity)
         }
 
@@ -39,14 +40,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             recyclerAdapter.addLoadStateListener {
-                when(it.refresh){
+                when (it.refresh) {
                     is LoadState.Loading -> {
                         progressBar.visibility = View.VISIBLE
                         recyclerView.visibility = View.INVISIBLE
                     }
-                    is  LoadState.NotLoading -> {
+                    is LoadState.NotLoading -> {
                         progressBar.visibility = View.INVISIBLE
-                        recyclerView.visibility - View.VISIBLE
+                        recyclerView.visibility = View.VISIBLE
                     }
                     is LoadState.Error -> {
                         val state = it.refresh as LoadState.Error
